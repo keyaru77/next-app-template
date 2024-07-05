@@ -1,55 +1,36 @@
-import { Link } from "@nextui-org/link";
-import { Snippet } from "@nextui-org/snippet";
-import { Code } from "@nextui-org/code";
-import { button as buttonStyles } from "@nextui-org/theme";
+// pages/index.js
+import Link from 'next/link';
 
-import { siteConfig } from "@/config/site";
-import { title, subtitle } from "@/components/primitives";
-import { GithubIcon } from "@/components/icons";
+export async function getServerSideProps() {
+  const res = await fetch('https://api.koranime.fun/v1/home');
+  const data = await res.json();
 
-export default function Home() {
+  return {
+    props: {
+      articles: data.articles,
+    },
+  };
+}
+
+export default function Home({ articles }) {
   return (
     <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
       <div className="inline-block max-w-lg text-center justify-center">
-        <h1 className={title()}>Make&nbsp;</h1>
-        <h1 className={title({ color: "violet" })}>beautiful&nbsp;</h1>
-        <br />
-        <h1 className={title()}>
-          websites regardless of your design experience.
-        </h1>
-        <h2 className={subtitle({ class: "mt-4" })}>
-          Beautiful, fast and modern React UI library.
-        </h2>
+        <h1 className="text-4xl font-bold">Anime List</h1>
       </div>
 
-      <div className="flex gap-3">
-        <Link
-          isExternal
-          className={buttonStyles({
-            color: "primary",
-            radius: "full",
-            variant: "shadow",
-          })}
-          href={siteConfig.links.docs}
-        >
-          Documentation
-        </Link>
-        <Link
-          isExternal
-          className={buttonStyles({ variant: "bordered", radius: "full" })}
-          href={siteConfig.links.github}
-        >
-          <GithubIcon size={20} />
-          GitHub
-        </Link>
-      </div>
-
-      <div className="mt-8">
-        <Snippet hideCopyButton hideSymbol variant="bordered">
-          <span>
-            Get started by editing <Code color="primary">app/page.tsx</Code>
-          </span>
-        </Snippet>
+      <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        {articles.map((article) => (
+          <div key={article.link} className="border p-4 rounded-lg">
+            <Link href={article.link} passHref>
+              <a target="_blank" className="block text-center">
+                <img src={article.img} alt={article.title} className="mx-auto" />
+                <h2 className="text-xl font-semibold mt-2">{article.title}</h2>
+                <p className="text-gray-600">{article.typez}</p>
+              </a>
+            </Link>
+          </div>
+        ))}
       </div>
     </section>
   );
